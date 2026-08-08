@@ -275,13 +275,53 @@
   .reveal.in{opacity:1;transform:none}
   @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}}
 
+  /* ===== CALL OR TEXT (shelf-tag chooser) =====
+     Root is .cot, never .wrap — .wrap is the page container above and the
+     popover would inherit its max-width and land off-screen. */
+  .cot{position:relative;display:inline-flex}
+  .cot__trigger{border:0;cursor:pointer;font-family:inherit}
+  .cot__menu{
+    position:absolute;top:calc(100% + 12px);right:0;z-index:80;
+    width:max-content;min-width:250px;
+    background:var(--ink);border:1px solid rgba(255,255,255,.14);
+    border-radius:14px;padding:6px;
+    box-shadow:0 26px 54px -20px rgba(0,0,0,.7);
+    display:grid;gap:2px;
+    opacity:0;transform:translateY(-8px) rotate(-.6deg);pointer-events:none;
+    transition:opacity .22s ease,transform .22s cubic-bezier(.2,.7,.2,1);
+  }
+  .cot__menu[data-open="true"]{opacity:1;transform:none;pointer-events:auto}
+  .cot__menu a{
+    display:grid;grid-template-columns:auto 1fr;align-items:center;gap:.85rem;
+    padding:.75rem .8rem;border-radius:10px;color:#fff;
+    border-left:3px solid transparent;transition:background .2s,border-color .2s;
+  }
+  .cot__menu a:hover{background:rgba(232,85,45,.16);border-left-color:var(--accent)}
+  .cot__menu svg{width:19px;height:19px;color:var(--accent-2)}
+  .cot__menu strong{
+    display:block;font-family:"Tanker",sans-serif;font-weight:400;
+    font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;
+  }
+  .cot__menu em{display:block;font-style:normal;font-size:.74rem;letter-spacing:.05em;color:#9a958b;margin-top:2px}
+  /* light-background variant, for the Visit block */
+  .cot--light .cot__menu{background:#fff;border-color:var(--line-dark);box-shadow:0 26px 54px -22px rgba(17,17,17,.42)}
+  .cot--light .cot__menu a{color:var(--ink)}
+  .cot--light .cot__menu svg{color:var(--accent)}
+  .cot--light .cot__menu em{color:#6d685f}
+  .cot--left .cot__menu{right:auto;left:0}
+  .cot--up .cot__menu{top:auto;bottom:calc(100% + 12px)}
+
   /* mobile tap-call floating button */
   .tapcall{display:none}
+  .cot--float{display:none}
   @media(max-width:880px){
+    .cot--float{display:block;position:fixed;right:16px;bottom:16px;z-index:70}
+    .cot--float .cot__menu{min-width:min(78vw,270px)}
     .tapcall{
-      display:flex;position:fixed;right:16px;bottom:16px;z-index:70;
+      display:flex;position:static;z-index:70;
       width:56px;height:56px;border-radius:50%;background:var(--accent);color:#fff;
       align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(232,85,45,.5);
+      border:0;cursor:pointer;
     }
     .tapcall svg{width:24px;height:24px}
   }
@@ -314,10 +354,22 @@
       <a href="#carry">In Store</a>
       <a href="#visit">Visit</a>
     </div>
-    <a class="navcta" href="tel:+19736771260" aria-label="Call Hip Hop Sneakers at (973) 677-1260">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      <span class="full">(973) 677-1260</span>
-    </a>
+    <div class="cot" data-cot>
+      <button type="button" class="navcta cot__trigger" data-cot-trigger aria-expanded="false" aria-haspopup="menu" aria-label="Call or text Hip Hop Sneakers at (973) 677-1260">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span class="full">(973) 677-1260</span>
+      </button>
+      <div class="cot__menu" data-cot-menu data-open="false" role="menu">
+        <a href="tel:+19736771260" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span><strong>Call the shop</strong><em>Counter picks up</em></span>
+        </a>
+        <a href="sms:+19736771260?&amp;body=Do%20you%20have%20these%20in%20a%2010.5%3F%20Sending%20a%20pic%20of%20the%20pair%20now." role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          <span><strong>Text your size</strong><em>Send a pic, we check the back</em></span>
+        </a>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -343,6 +395,7 @@
       <p class="hero__sub">A real sneaker spot on South Main, not a kiosk. Jordans, Forces, fitteds, tees and the kind of back stock you have to ask the counter for. If it is dropping, it is on the wall.</p>
       <div class="hero__cta">
         <a class="btn btn--solid" href="tel:+19736771260">Call The Shop</a>
+        <a class="btn btn--ghost" href="sms:+19736771260?&amp;body=Do%20you%20have%20these%20in%20a%2010.5%3F%20Sending%20a%20pic%20of%20the%20pair%20now.">Text Your Size</a>
         <a class="btn btn--ghost" href="#drops">See What Dropped</a>
       </div>
       <div class="hero__meta">
@@ -520,6 +573,7 @@
       </ul>
       <div class="visit__cta">
         <a class="btn btn--solid" href="tel:+19736771260">Call (973) 677-1260</a>
+        <a class="btn btn--ghost" href="sms:+19736771260?&amp;body=Is%20this%20pair%20still%20in%20stock%3F%20I%20wear%20a%2010.5.">Text Instead</a>
         <a class="btn btn--ghost" href="https://www.google.com/maps?q=211+S+Main+St,+Orange,+NJ+07050" target="_blank" rel="noopener">Get Directions</a>
       </div>
     </div>
@@ -545,6 +599,7 @@
         <p>211 S Main St #1<br>City of Orange, NJ 07050</p>
         <a href="tel:+19736771260">(973) 677-1260</a>
         <a class="foot__cta" href="tel:+19736771260">Call The Shop</a>
+        <a class="foot__cta" href="sms:+19736771260?&amp;body=Do%20you%20have%20these%20in%20a%2010.5%3F%20Sending%20a%20pic%20of%20the%20pair%20now.">Text The Shop</a>
       </div>
       <div class="foot__col">
         <h4>Hours</h4>
@@ -557,19 +612,57 @@
     </div>
     <div class="foot__bottom">
       <small>© <span id="yr"></span> Hip Hop Sneakers · City of Orange, NJ</small>
-      <span class="bysemaj">Built by <a href="https://bysemaj.com" target="_blank" rel="noopener">bysemaj.com</a></span>
+      <span class="bysemaj">built <a href="https://bysemaj.com" target="_blank" rel="noopener">bysemaj.com</a></span>
     </div>
   </div>
 </footer>
 
 <!-- mobile floating call -->
-<a class="tapcall" href="tel:+19736771260" aria-label="Call Hip Hop Sneakers">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-</a>
+<div class="cot cot--up cot--float" data-cot>
+  <button type="button" class="tapcall cot__trigger" data-cot-trigger aria-expanded="false" aria-haspopup="menu" aria-label="Call or text Hip Hop Sneakers">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+  </button>
+  <div class="cot__menu" data-cot-menu data-open="false" role="menu">
+    <a href="tel:+19736771260" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span><strong>Call (973) 677-1260</strong><em>Counter picks up</em></span>
+    </a>
+    <a href="sms:+19736771260?&amp;body=Do%20you%20have%20these%20in%20a%2010.5%3F%20Sending%20a%20pic%20of%20the%20pair%20now." role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      <span><strong>Text your size</strong><em>Send a pic, we check the back</em></span>
+    </a>
+  </div>
+</div>
 
 <script>
   // year
   document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // ===== Call or Text chooser =====
+  (function(){
+    var groups = [].slice.call(document.querySelectorAll('[data-cot]'));
+    function closeAll(except){
+      groups.forEach(function(g){
+        if(g === except) return;
+        g.querySelector('[data-cot-menu]').setAttribute('data-open','false');
+        g.querySelector('[data-cot-trigger]').setAttribute('aria-expanded','false');
+      });
+    }
+    groups.forEach(function(g){
+      var trigger = g.querySelector('[data-cot-trigger]');
+      var menu = g.querySelector('[data-cot-menu]');
+      trigger.addEventListener('click', function(e){
+        e.stopPropagation();
+        var open = menu.getAttribute('data-open') === 'true';
+        closeAll(g);
+        menu.setAttribute('data-open', open ? 'false' : 'true');
+        trigger.setAttribute('aria-expanded', open ? 'false' : 'true');
+      });
+      menu.addEventListener('click', function(){ closeAll(); });
+    });
+    document.addEventListener('click', function(){ closeAll(); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeAll(); });
+  })();
 
   // duplicate ticker content for a seamless 50% loop
   (function(){
